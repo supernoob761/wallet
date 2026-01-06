@@ -1,0 +1,16 @@
+{
+    "name": "pc/wallet",
+    "autoload": {
+        "psr-4": {
+            "Module\\": "src/module/",
+            "Controller\\": "src/controller/"
+        }
+    },
+    "authors": [
+        {
+            "name": "supernoob761",
+            "email": "supernoob761@gmail.com"
+        }
+    ],
+    "require": {}
+}
