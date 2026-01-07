@@ -4,7 +4,7 @@ namespace Module;
 
 use PDO;
 
-class categories
+class Categories
 {
     private $db;
 

@@ -1,64 +1,44 @@
 <?php
 
-namespace Module;   
-/**
- * Classe Database - Pattern Singleton
- * Gère la connexion à la base de données
- */
+namespace Module;
+
+use PDO;
+use PDOException;
 
 class Database {
     private static $instance = null;
     private $connection;
-    
-    /**
-     * Constructeur privé pour empêcher l'instanciation directe
-     */
+
     private function __construct() {
         try {
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $dsn = "mysql:host=" . \DB_HOST . ";dbname=" . \DB_NAME . ";charset=" . \DB_CHARSET;
+
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ];
-            
-            $this->connection = new PDO($dsn, DB_USER, DB_PASS, $options);
+
+            $this->connection = new PDO($dsn, \DB_USER, \DB_PASS, $options);
         } catch (PDOException $e) {
             die("Erreur de connexion : " . $e->getMessage());
         }
     }
-    
-    /**
-     * Empêche le clonage de l'instance
-     */
+
     private function __clone() {}
-    
-    /**
-     * Récupère l'instance unique de Database
-     * @return Database
-     */
-    public static function getInstance() {
+
+    public static function getInstance(): Database {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-    
-    /**
-     * Récupère la connexion PDO
-     * @return PDO
-     */
-    public function getConnection() {
+
+    public function getConnection(): PDO {
         return $this->connection;
     }
-    
-    /**
-     * Prépare et exécute une requête
-     * @param string $sql
-     * @param array $params
-     * @return PDOStatement
-     */
-    public function query($sql, $params = []) {
+
+    public function query(string $sql, array $params = []) {
         $stmt = $this->connection->prepare($sql);
         $stmt->execute($params);
         return $stmt;
