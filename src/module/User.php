@@ -4,78 +4,52 @@ namespace Module;
 
 use PDO;
 
-class User
+class User extends BaseModel
 {
-    private $db;
 
-    private $id;
     private $name;
     private $email;
     private $password;
     private $created_at;
 
-    public function __construct() {
-        $this->db = Database::getInstance();
-    }
-
-    public function getAll() {
-        return $this->db
-            ->query("SELECT * FROM users")
-            ->fetchAll();
-    }
-
-    public function loadById($id): bool {
-        $stmt = $this->db->getConnection()->prepare(
-            "SELECT * FROM users WHERE id = :id"
-        );
-        $stmt->execute(['id' => $id]);
-
-        if ($user = $stmt->fetch()) {
-            $this->fill($user);
-            return true;
-        }
-        return false;
-    }
-
-    public function loadByEmail($email): bool {
-        $stmt = $this->db->getConnection()->prepare(
-            "SELECT * FROM users WHERE email = :email"
-        );
-        $stmt->execute(['email' => $email]);
-
-        if ($user = $stmt->fetch()) {
-            $this->fill($user);
-            return true;
-        }
-        return false;
-    }
-
-    public function createUser(string $name, string $email, string $password): bool {
-    $this->name = $name;
-    $this->email = $email;
-    // Hash the password
-    $this->password = password_hash($password, PASSWORD_DEFAULT);
-
-    $stmt = $this->db->getConnection()->prepare(
-        "INSERT INTO users (name, email, password, created_at)
-         VALUES (:name, :email, :password, NOW())"
-    );
-
-    return $stmt->execute([
-        'name' => $this->name,
-        'email' => $this->email,
-        'password' => $this->password
-    ]);
+public function __construct() {
+    parent::__construct();
 }
 
+    public function GetId(){return $this->id;}
+    public function GetName(){return $this->name;}
+    public function GetEmail(){return $this->email;}
+    public function GetPassword(){return $this->password;}
+    public function GetDate(){return $this->created_at;}    
 
-    private function fill(array $user): void {
-        $this->id = $user['id'];
-        $this->name = $user['name'];
-        $this->email = $user['email'];
-        $this->password = $user['password'];
-        $this->created_at = $user['created_at'];
+    protected function getTable(): string {
+        return "users";
     }
+
+    protected function getColumns(): array {
+        return ['name', 'email', 'password', 'created_at'];
+    }
+
+    protected function fill(array $row): void{
+       $this->id = $row['id'];
+        $this->name = $row['name'];
+        $this->email = $row['email'];
+        $this->password = $row['password'];
+        $this->created_at = $row['created_at'];
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function logout(): void
 {
     $_SESSION = [];
